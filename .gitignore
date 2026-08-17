@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.env
+.venv
+*.db
+*.sqlite3
+test_lifeos.db
+lifeos.db
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Node / Frontend
+node_modules/
+dist/
+dist-ssr/
+*.local
+.npm
+.eslintcache
+frontend/dist/
+frontend/node_modules/
+
+# IDE / OS
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db

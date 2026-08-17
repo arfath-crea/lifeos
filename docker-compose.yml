@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: lifeos_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: lifeos_user
+      POSTGRES_PASSWORD: lifeos_password_secure
+      POSTGRES_DB: lifeos_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U lifeos_user -d lifeos_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: lifeos_backend
+    restart: always
+    environment:
+      DATABASE_URL: postgresql://lifeos_user:lifeos_password_secure@postgres:5432/lifeos_db
+      SECRET_KEY: lifeos_super_production_secret_key_change_me
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: lifeos_frontend
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
