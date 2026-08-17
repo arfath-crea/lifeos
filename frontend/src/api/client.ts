@@ -64,10 +64,33 @@ class ApiClient {
     });
   }
 
-  demoLogin() {
-    return this.request<{ access_token: string; token_type: string; user: any }>('/auth/demo', {
-      method: 'POST'
-    });
+  async demoLogin() {
+    try {
+      return await this.request<{ access_token: string; token_type: string; user: any }>('/auth/demo', {
+        method: 'POST'
+      });
+    } catch (err) {
+      console.warn('Backend offline or waking up. Initializing offline demo session...');
+      // Fallback demo user session so the live demo never breaks on Vercel
+      const demoUser = {
+        id: 1,
+        email: "alex@lifeos.dev",
+        full_name: "Alex Mercer",
+        currency: "₹",
+        theme: "dark",
+        monthly_budget: 25000.0,
+        study_daily_target_minutes: 120,
+        created_at: new Date().toISOString()
+      };
+      const demoToken = "demo_offline_token_" + Date.now();
+      localStorage.setItem('lifeos_token', demoToken);
+      localStorage.setItem('lifeos_user', JSON.stringify(demoUser));
+      return {
+        access_token: demoToken,
+        token_type: "bearer",
+        user: demoUser
+      };
+    }
   }
 
   getMe() {

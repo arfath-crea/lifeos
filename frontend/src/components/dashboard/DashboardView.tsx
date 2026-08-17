@@ -35,7 +35,8 @@ export const DashboardView: React.FC = () => {
         const res = await api.getDashboard();
         setData(res);
       } catch (err) {
-        console.error('Failed to load dashboard:', err);
+        console.warn('Using demo dashboard data (backend offline)...');
+        import('../../utils/mockData').then(m => setData(m.fallbackDashboard));
       } finally {
         setLoading(false);
       }
